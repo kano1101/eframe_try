@@ -1,7 +1,7 @@
 [package]
-name = "eframe_template"
+name = "marble_try"
 version = "0.1.0"
-authors = ["Emil Ernerfeldt <emil.ernerfeldt@gmail.com>"]
+authors = ["Akira Kano <a.kano1101@gmail.com>"]
 edition = "2021"
 rust-version = "1.60"
 
