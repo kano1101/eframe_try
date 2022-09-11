@@ -1,3 +1,10 @@
+use eframe;
+use eframe::egui;
+use eframe::egui::FontData;
+use eframe::egui::FontDefinitions;
+use eframe::egui::FontFamily;
+use eframe::egui::Ui;
+
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
@@ -14,24 +21,61 @@ impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            label: "Hello World!".to_owned(),
+            label: "テスト World!".to_owned(),
             value: 2.7,
         }
     }
 }
 
 impl TemplateApp {
-    /// Called once before the first frame.
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        // This is also where you can customized the look at feel of egui using
-        // `cc.egui_ctx.set_visuals` and `cc.egui_ctx.set_fonts`.
+    // pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+    //     if let Some(storage) = cc.storage {
+    //         return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+    //     }
 
-        // Load previous app state (if any).
-        // Note that you must enable the `persistence` feature for this to work.
-        if let Some(storage) = cc.storage {
-            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        }
+    //     let mut fonts = FontDefinitions::default();
+    //     fonts.font_data.insert(
+    //         "my_font".to_string(),
+    //         FontData::from_static(include_bytes!("../fonts/SourceHanSansJP-Regular.otf")),
+    //     );
+    //     fonts
+    //         .families
+    //         .get_mut(&FontFamily::Proportional)
+    //         .unwrap()
+    //         .insert(0, "my_font".to_string());
+    //     fonts
+    //         .families
+    //         .get_mut(&FontFamily::Monospace)
+    //         .unwrap()
+    //         .push("my_font".to_string());
+    //     cc.egui_ctx.set_fonts(fonts);
 
+    //     cc.egui_ctx.set_visuals(egui::Visuals::default());
+    //     Default::default()
+    // }
+    pub fn new(cc: &eframe::CreationContext<'_>) -> TemplateApp {
+        // if let Some(storage) = cc.storage {
+        //     return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        // }
+
+        let mut fonts = FontDefinitions::default();
+        fonts.font_data.insert(
+            "my_font".to_string(),
+            FontData::from_static(include_bytes!("../fonts/SourceHanSansJP-Regular.otf")),
+        );
+        fonts
+            .families
+            .get_mut(&FontFamily::Proportional)
+            .unwrap()
+            .insert(0, "my_font".to_string());
+        fonts
+            .families
+            .get_mut(&FontFamily::Monospace)
+            .unwrap()
+            .insert(0, "my_font".to_string());
+        cc.egui_ctx.set_fonts(fonts);
+
+        cc.egui_ctx.set_visuals(egui::Visuals::default());
         Default::default()
     }
 }
@@ -44,7 +88,7 @@ impl eframe::App for TemplateApp {
 
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         let Self { label, value } = self;
 
         // Examples of how to create different panels and windows.
@@ -53,12 +97,11 @@ impl eframe::App for TemplateApp {
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
-        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
+        egui::TopBottomPanel::top("menu_bar").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
-                ui.menu_button("File", |ui| {
-                    if ui.button("Quit").clicked() {
-                        _frame.close();
+                ui.menu_button("ファイル", |ui| {
+                    if ui.button("終了").clicked() {
+                        frame.close();
                     }
                 });
             });
@@ -68,7 +111,7 @@ impl eframe::App for TemplateApp {
             ui.heading("Side Panel");
 
             ui.horizontal(|ui| {
-                ui.label("Write something: ");
+                ui.label("何か書いてください: ".to_string());
                 ui.text_edit_singleline(label);
             });
 
