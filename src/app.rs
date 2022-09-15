@@ -28,36 +28,7 @@ impl Default for TemplateApp {
 }
 
 impl TemplateApp {
-    // pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-    //     if let Some(storage) = cc.storage {
-    //         return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-    //     }
-
-    //     let mut fonts = FontDefinitions::default();
-    //     fonts.font_data.insert(
-    //         "my_font".to_string(),
-    //         FontData::from_static(include_bytes!("../fonts/SourceHanSansJP-Regular.otf")),
-    //     );
-    //     fonts
-    //         .families
-    //         .get_mut(&FontFamily::Proportional)
-    //         .unwrap()
-    //         .insert(0, "my_font".to_string());
-    //     fonts
-    //         .families
-    //         .get_mut(&FontFamily::Monospace)
-    //         .unwrap()
-    //         .push("my_font".to_string());
-    //     cc.egui_ctx.set_fonts(fonts);
-
-    //     cc.egui_ctx.set_visuals(egui::Visuals::default());
-    //     Default::default()
-    // }
     pub fn new(cc: &eframe::CreationContext<'_>) -> TemplateApp {
-        // if let Some(storage) = cc.storage {
-        //     return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        // }
-
         let mut fonts = FontDefinitions::default();
         fonts.font_data.insert(
             "my_font".to_string(),
@@ -76,25 +47,21 @@ impl TemplateApp {
         cc.egui_ctx.set_fonts(fonts);
 
         cc.egui_ctx.set_visuals(egui::Visuals::default());
-        Default::default()
+
+        if let Some(storage) = cc.storage {
+            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        } else {
+            return Default::default();
+        }
     }
 }
 
 impl eframe::App for TemplateApp {
-    /// Called by the frame work to save state before shutdown.
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
         eframe::set_value(storage, eframe::APP_KEY, self);
     }
-
-    /// Called each time the UI needs repainting, which may be many times per second.
-    /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         let Self { label, value } = self;
-
-        // Examples of how to create different panels and windows.
-        // Pick whichever suits you.
-        // Tip: a good default choice is to just keep the `CentralPanel`.
-        // For inspiration and more examples, go to https://emilk.github.io/egui
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
         egui::TopBottomPanel::top("menu_bar").show(ctx, |ui| {
@@ -112,26 +79,7 @@ impl eframe::App for TemplateApp {
 
             ui.horizontal(|ui| {
                 ui.label("何か書いてください: ".to_string());
-                ui.text_edit_singleline(label);
-            });
-
-            ui.add(egui::Slider::new(value, 0.0..=10.0).text("value"));
-            if ui.button("Increment").clicked() {
-                *value += 1.0;
-            }
-
-            ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
-                ui.horizontal(|ui| {
-                    ui.spacing_mut().item_spacing.x = 0.0;
-                    ui.label("powered by ");
-                    ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-                    ui.label(" and ");
-                    ui.hyperlink_to(
-                        "eframe",
-                        "https://github.com/emilk/egui/tree/master/crates/eframe",
-                    );
-                    ui.label(".");
-                });
+                ui.text_edit_multiline(label);
             });
         });
 
@@ -146,14 +94,5 @@ impl eframe::App for TemplateApp {
             ));
             egui::warn_if_debug_build(ui);
         });
-
-        if false {
-            egui::Window::new("Window").show(ctx, |ui| {
-                ui.label("Windows can be moved by dragging them.");
-                ui.label("They are automatically sized based on contents.");
-                ui.label("You can turn on resizing and scrolling if you like.");
-                ui.label("You would normally chose either panels OR windows.");
-            });
-        }
     }
 }
