@@ -9,7 +9,7 @@ fn main() {
 
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
-        "テスト",
+        "eframe template",
         native_options,
         Box::new(|cc| Box::new(marble_try::TemplateApp::new(cc))),
     );
